@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demo-app
+  namespace: demo
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: demo-app
+  template:
+    metadata:
+      labels:
+        app: demo-app
+    spec:
+      containers:
+      - name: demo-app
+        image: #{acrName}#.azurecr.io/demo-app:#{Build.BuildId}#
+        ports:
+        - containerPort: 8080
+      imagePullSecrets:
+      - name: acr-secret
+
+---

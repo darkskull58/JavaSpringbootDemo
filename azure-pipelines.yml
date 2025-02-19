@@ -1,0 +1,60 @@
+trigger: none
+
+variables:
+  acrName: 'demoacr'
+  acrResourceGroup: 'demo-app-rg'
+  kubernetesServiceConnection: 'demo-aks-connection'
+  containerRegistry: '$(acrName).azurecr.io'
+  imageRepository: 'demo-app'
+  tag: '$(Build.BuildId)'
+
+stages:
+- stage: Build
+  jobs:
+  - job: BuildAndTest
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - task: Maven@3
+      inputs:
+        mavenPomFile: 'pom.xml'
+        goals: 'clean test'
+        publishJUnitResults: true
+        testResultsFiles: '**/surefire-reports/TEST-*.xml'
+
+    - task: Docker@2
+      inputs:
+        containerRegistry: '$(acrName)'
+        repository: '$(imageRepository)'
+        command: 'buildAndPush'
+        Dockerfile: '**/Dockerfile'
+        tags: '$(tag)'
+
+    - task: TrivyTask@1
+      inputs:
+        version: 'latest'
+        scan: 'image'
+        imageRef: '$(containerRegistry)/$(imageRepository):$(tag)'
+        severityThreshold: 'HIGH'
+
+- stage: Deploy
+  dependsOn: Build
+  condition: succeeded()
+  jobs:
+  - deployment: DeployToAKS
+    pool:
+      vmImage: 'ubuntu-latest'
+    environment: 'production'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: KubernetesManifest@0
+            inputs:
+              action: 'deploy'
+              kubernetesServiceConnection: '$(kubernetesServiceConnection)'
+              namespace: 'demo'
+              manifests: |
+                kubernetes/deployment.yaml
+                kubernetes/service.yaml
+                kubernetes/rbac.yaml
