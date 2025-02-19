@@ -1,0 +1,38 @@
+# terraform-pipeline.yml
+trigger:
+  branches:
+    include:
+    - main
+  paths:
+    include:
+    - terraform/*
+
+variables:
+  serviceConnection: 'azure-service-connection'
+
+stages:
+- stage: Terraform
+  jobs:
+  - job: Deploy
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - task: TerraformInstaller@0
+      inputs:
+        terraformVersion: 'latest'
+
+    - task: TerraformTaskV3@3
+      inputs:
+        provider: 'azurerm'
+        command: 'init'
+        backendServiceArm: '$(serviceConnection)'
+        backendAzureRmResourceGroupName: 'terraform-state-rg'
+        backendAzureRmStorageAccountName: 'tfstate123xyz'
+        backendAzureRmContainerName: 'tfstate'
+        backendAzureRmKey: 'terraform.tfstate'
+
+    - task: TerraformTaskV3@3
+      inputs:
+        provider: 'azurerm'
+        command: 'apply'
+        environmentServiceNameAzureRM: '$(serviceConnection)'
