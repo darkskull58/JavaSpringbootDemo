@@ -9,7 +9,7 @@ stages:
   jobs:
   - job: Deploy
     pool:
-      vmImage: 'selfHostedPool'
+      name: 'selfHostedPool'
     steps:
     - task: TerraformInstaller@0
       inputs:
