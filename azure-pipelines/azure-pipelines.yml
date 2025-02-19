@@ -1,6 +1,5 @@
 # azure-pipelines.yml
-trigger:
-  - main
+trigger: none
 
 variables:
   acrName: 'youracr'

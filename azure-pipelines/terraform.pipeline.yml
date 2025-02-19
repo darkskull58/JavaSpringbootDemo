@@ -1,11 +1,5 @@
 # terraform-pipeline.yml
-trigger:
-  branches:
-    include:
-    - main
-  paths:
-    include:
-    - terraform/*
+trigger: none
 
 variables:
   serviceConnection: 'azure-service-connection'
@@ -26,8 +20,8 @@ stages:
         provider: 'azurerm'
         command: 'init'
         backendServiceArm: '$(serviceConnection)'
-        backendAzureRmResourceGroupName: 'terraform-state-rg'
-        backendAzureRmStorageAccountName: 'tfstate123xyz'
+        backendAzureRmResourceGroupName: 'terraform-rg'
+        backendAzureRmStorageAccountName: 'terraformsasourishbasu'
         backendAzureRmContainerName: 'tfstate'
         backendAzureRmKey: 'terraform.tfstate'
 

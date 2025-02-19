@@ -1,0 +1,64 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "location": {
+        "type": "string",
+        "defaultValue": "eastus",
+        "metadata": {
+          "description": "Location for the resources"
+        }
+      },
+      "storageAccountName": {
+        "type": "string",
+        "defaultValue": "tfstate123xyz",
+        "metadata": {
+          "description": "Unique name for the storage account"
+        }
+      },
+      "containerName": {
+        "type": "string",
+        "defaultValue": "tfstate",
+        "metadata": {
+          "description": "Name of the storage container for Terraform state"
+        }
+      }
+    },
+    "resources": [
+      {
+        "type": "Microsoft.Storage/storageAccounts",
+        "apiVersion": "2022-09-01",
+        "name": "[parameters('storageAccountName')]",
+        "location": "[parameters('location')]",
+        "sku": {
+          "name": "Standard_LRS"
+        },
+        "kind": "StorageV2",
+        "properties": {
+          "accessTier": "Hot"
+        }
+      },
+      {
+        "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+        "apiVersion": "2021-09-01",
+        "name": "[concat(parameters('storageAccountName'), '/default/', parameters('containerName'))]",
+        "dependsOn": [
+          "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
+        ],
+        "properties": {
+          "publicAccess": "None"
+        }
+      }
+    ],
+    "outputs": {
+      "storageAccountName": {
+        "type": "string",
+        "value": "[parameters('storageAccountName')]"
+      },
+      "containerName": {
+        "type": "string",
+        "value": "[parameters('containerName')]"
+      }
+    }
+  }
+  
