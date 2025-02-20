@@ -1,4 +1,3 @@
-# terraform-pipeline.yml
 trigger: none
 
 variables:
@@ -20,6 +19,7 @@ stages:
         terraformVersion: 'latest'
 
     - task: TerraformTaskV3@3
+      displayName: 'Terraform Init'
       inputs:
         provider: 'azurerm'
         command: 'init'
@@ -30,7 +30,16 @@ stages:
         backendAzureRmKey: 'terraform.tfstate'
 
     - task: TerraformTaskV3@3
+      displayName: 'Terraform Plan'
+      inputs:
+        provider: 'azurerm'
+        command: 'plan'
+        environmentServiceNameAzureRM: '$(serviceConnection)'
+
+    - task: TerraformTaskV3@3
+      displayName: 'Terraform Apply'
       inputs:
         provider: 'azurerm'
         command: 'apply'
         environmentServiceNameAzureRM: '$(serviceConnection)'
+        commandOptions: '-auto-approve'

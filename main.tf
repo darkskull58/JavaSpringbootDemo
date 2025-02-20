@@ -1,4 +1,3 @@
-# main.tf
 terraform {
   required_providers {
     azurerm = {
@@ -8,29 +7,30 @@ terraform {
   }
 }
 
-
-
 provider "azurerm" {
   features {}
+  # Best practice: Add explicit subscription_id and tenant_id
+  # subscription_id = "your-subscription-id"
+  # tenant_id       = "your-tenant-id"
 }
 
-resource "azurerm_resource_group" "rg" {
-  name     = "demo-app-rg"
-  location = "eastus"
+# Using existing resource group instead of creating one
+data "azurerm_resource_group" "rg" {
+  name = "terraform-rg"
 }
 
 resource "azurerm_container_registry" "acr" {
   name                = "demoacr123"
-  resource_group_name = azurerm_resource_group.rg.name
-  location            = azurerm_resource_group.rg.location
+  resource_group_name = data.azurerm_resource_group.rg.name
+  location            = data.azurerm_resource_group.rg.location
   sku                 = "Basic"
   admin_enabled       = true
 }
 
 resource "azurerm_kubernetes_cluster" "aks" {
   name                = "demo-aks"
-  location            = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
+  location            = data.azurerm_resource_group.rg.location
+  resource_group_name = data.azurerm_resource_group.rg.name
   dns_prefix          = "demoaks"
 
   default_node_pool {
@@ -46,9 +46,9 @@ resource "azurerm_kubernetes_cluster" "aks" {
 
 # Allow AKS to pull images from ACR
 resource "azurerm_role_assignment" "aks_acr" {
-  principal_id                     = azurerm_kubernetes_cluster.aks.kubelet_identity[0].object_id
-  role_definition_name             = "AcrPull"
-  scope                           = azurerm_container_registry.acr.id
+  principal_id         = azurerm_kubernetes_cluster.aks.kubelet_identity[0].object_id
+  role_definition_name = "AcrPull"
+  scope               = azurerm_container_registry.acr.id
 }
 
 output "acr_login_server" {
