@@ -9,7 +9,7 @@ stages:
   jobs:
   - job: Deploy
     pool:
-      name: 'Azure Pipelines'
+      name: 'selfHostedPool'
     steps:
     - task: TerraformInstaller@0
       inputs:
