@@ -22,6 +22,7 @@ stages:
 
     - script: |
         terraform init
+        terraform plan
       displayName: 'Terraform Init'
 
     - task: TerraformTaskV3@3
