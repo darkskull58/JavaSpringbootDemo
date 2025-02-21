@@ -22,20 +22,13 @@ stages:
 
     - script: |
         terraform init
-        terraform plan
       displayName: 'Terraform Init'
 
-    - task: TerraformTaskV3@3
+    - script: |
+        terraform plan -auto-approve
       displayName: 'Terraform Plan'
-      inputs:
-        provider: 'azurerm'
-        command: 'plan'
-        environmentServiceNameAzureRM: '$(serviceConnection)'
 
-    - task: TerraformTaskV3@3
+    - script: |
+        terraform apply -auto-approve
       displayName: 'Terraform Apply'
-      inputs:
-        provider: 'azurerm'
-        command: 'apply'
-        environmentServiceNameAzureRM: '$(serviceConnection)'
-        commandOptions: '-auto-approve'
+
