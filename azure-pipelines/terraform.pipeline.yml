@@ -2,6 +2,10 @@ trigger: none
 
 variables:
   serviceConnection: 'azure-service-connection'
+  resourceGroupName: 'terraform-rg'
+  storageAccountName: 'terraformsasourishbasu'
+  containerName: 'tfstate'
+  stateFileName: 'terraform.tfstate'
 
 stages:
 - stage: Terraform
@@ -9,10 +13,17 @@ stages:
   - job: Deploy
     pool:
       name: 'selfHostedPool'
+
     steps:
     - task: TerraformInstaller@0
+      displayName: 'Install Terraform'
       inputs:
         terraformVersion: 'latest'
+
+    - script: |
+        export TF_LOG=DEBUG
+        terraform init
+      displayName: 'Debug Terraform Init'
 
     - task: TerraformTaskV3@3
       displayName: 'Terraform Init'
@@ -20,10 +31,10 @@ stages:
         provider: 'azurerm'
         command: 'init'
         backendServiceArm: '$(serviceConnection)'
-        backendAzureRmResourceGroupName: 'terraform-rg'
-        backendAzureRmStorageAccountName: 'terraformsasourishbasu'
-        backendAzureRmContainerName: 'tfstate'
-        backendAzureRmKey: 'terraform.tfstate'
+        backendAzureRmResourceGroupName: '$(resourceGroupName)'
+        backendAzureRmStorageAccountName: '$(storageAccountName)'
+        backendAzureRmContainerName: '$(containerName)'
+        backendAzureRmKey: '$(stateFileName)'
 
     - task: TerraformTaskV3@3
       displayName: 'Terraform Plan'
