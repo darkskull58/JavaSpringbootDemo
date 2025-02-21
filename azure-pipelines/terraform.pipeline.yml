@@ -21,7 +21,6 @@ stages:
         terraformVersion: 'latest'
 
     - script: |
-        export TF_LOG=DEBUG
         terraform init
       displayName: 'Debug Terraform Init'
 
