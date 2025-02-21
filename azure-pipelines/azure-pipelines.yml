@@ -13,16 +13,6 @@ stages:
       name: 'selfHostedPool'
     steps:
 
-    - task: DockerInstaller@0
-      displayName: 'Docker Installer'
-      inputs:
-        dockerVersion: '17.09.0-ce'
-
-    - task: KubectlInstaller@0
-      displayName: 'Kubectl Installer'
-      inputs:
-        kubectlVersion: 'latest'
-
     - task: Docker@2
       displayName: 'Build and Push Backend'
       inputs:
