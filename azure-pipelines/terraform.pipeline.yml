@@ -25,7 +25,7 @@ stages:
       displayName: 'Terraform Init'
 
     - script: |
-        terraform plan -auto-approve
+        terraform plan 
       displayName: 'Terraform Plan'
 
     - script: |
