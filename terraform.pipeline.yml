@@ -22,13 +22,16 @@ stages:
 
     - script: |
         terraform init
+      workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
       displayName: 'Terraform Init'
 
     - script: |
         terraform plan 
+      workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
       displayName: 'Terraform Plan'
 
     - script: |
         terraform apply -auto-approve
+      workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
       displayName: 'Terraform Apply'
 
