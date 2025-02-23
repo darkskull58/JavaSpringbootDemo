@@ -2,10 +2,10 @@ trigger: none
 
 variables:
   serviceConnection: 'azure-service-connection'
-  resourceGroupName: 'terraform-rg'
-  storageAccountName: 'terraformsasourishbasu'
-  containerName: 'tfstate'
-  stateFileName: 'terraform.tfstate'
+  resource_group_name: 'terraform-rg'
+  storage_account_name: 'terraformsasourishbasu'
+  container_name: 'tfstate'
+  key: 'terraform.tfstate'
 
 stages:
 - stage: Terraform
