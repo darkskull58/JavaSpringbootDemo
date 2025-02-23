@@ -14,7 +14,7 @@ stages:
         terraformVersion: 'latest'
 
     - script: |
-        terraform init -backend-config="backend.tfvars"
+        terraform init 
       workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
       displayName: 'Terraform Init'
 
